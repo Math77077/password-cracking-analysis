@@ -1,30 +1,15 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#define NUM_PREFIXES 4
+#include "oracle.h"
 
-bool check_partial(char prefix[], int start_pos);
-bool check_password(char candidate[]);
+#define CACHE_SIZE 14776336
+
 bool increment_counter(int counter[], int base, int size, int left_boundary);
 void build_password_string(int counter[], int password_size, char alphabet[], char curr_password[]);
-int find_char_index(char target, char alphabet[]);
-void pre_load_counter(char prefix[], int prefix_len, char alphabet[], int counter[]);
-void bruteForce(char alphabet[], int base, int counter[], int password_size, int start_idx);
-void solve_dynamic_programming(char alphabet[], int base, int counter[], int password_size);
-
-bool check_partial(char prefix[], int start_pos) {
-    char *true_password = "1234abcd";
-
-    if (strncmp(true_password, prefix, strlen(prefix)) == 0) {
-        return true;
-    }
-    return false;
-}
-
-bool check_password(char candidate[]) {
-    char *true_password = "1234abcd";
-    return strcmp(candidate, true_password) == 0;
-}
+bool bruteForce(char alphabet[], int base, int counter[], int password_size, int start_idx, char* found_password);
+static int get_cache_index(const int counter[]);
+void solve_dynamic_programming_memoization(char alphabet[], int base, int password_size, char *found_password);
 
 bool increment_counter(int counter[], int base, int size, int left_boundary) {
     int idx = size - 1;
@@ -48,64 +33,53 @@ void build_password_string(int counter[], int password_size, char alphabet[], ch
     curr_password[password_size] = '\0';
 }
 
-int find_char_index(char target, char alphabet[]) {
-    for (int i = 0; i < strlen(alphabet); i++) {
-        if (alphabet[i] == target) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-void pre_load_counter(char prefix[], int prefix_len, char alphabet[], int counter[]) {
-    for (int i = 0; i < prefix_len; i++) {
-        char curr_char = prefix[i];
-        int alpha_idx = find_char_index(curr_char, alphabet);
-        counter[i] = alpha_idx;
-    }
-};
-
-void bruteForce(char alphabet[], int base, int counter[], int password_size, int start_idx) {
+bool bruteForce(char alphabet[], int base, int counter[], int password_size, int start_idx, char* found_password) {
     bool has_next = true;
-    bool match_found = false;
-    char temp_current_password[9];
+    char current_password[9];
 
-    while (has_next == true && match_found == false) {
-        build_password_string(counter, password_size, alphabet, temp_current_password);
-        if (check_password(temp_current_password)) {
-            printf("Password cracked! The password is: %s\n", temp_current_password);
-            match_found = true;
-            return;
+    while (has_next == true) {
+        build_password_string(counter, password_size, alphabet, current_password);
+        if (check_full(current_password)) {
+            strcpy(found_password, current_password);
+            return true;
         } else {
             has_next = increment_counter(counter, base, password_size, start_idx);
         }
     }
-    printf("Search complete. All alphanumeric combinations exhausted. Target password not found.");
-    return;
+    return false;
 }
 
-void solve_dynamic_programming(char alphabet[], int base, int counter[], int password_size) {
-    char *prefixes[] = {"admin", "1234", "pass", "user"};
+static int get_cache_index(const int counter[]) {
+    int index = (counter[0] * 62 * 62 * 62) + (counter[1] * 62 * 62) + (counter[2] * 62) + (counter[3]);
+    return index;
+}
 
-    for (int i = 0; i < NUM_PREFIXES; i++) {
-        if (check_partial(prefixes[i], 0)) {
-            int prefix_len = strlen(prefixes[i]);
+void solve_dynamic_programming_memoization(char alphabet[], int base, int password_size, char *found_password) {
+    int counter[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+    char current_password[9];
 
-            pre_load_counter(prefixes[i], prefix_len, alphabet, counter);
-            bruteForce(alphabet, base, counter, password_size, prefix_len);
-            return;
-        }
+    bool *failed_prefixes = calloc(CACHE_SIZE, sizeof(bool));
+    if (failed_prefixes == NULL) {
+        perror("Failed to allocate memory for DP cache");
+        return;
     }
 
-    bruteForce(alphabet, base, counter, password_size, 0);
-}
-
-int main() {
-    char alphabet[63] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    int base = 62;
-    int counter[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-    int password_size = 8;
-    solve_dynamic_programming(alphabet, base, counter, password_size);
-
-    return 0;
+    do {
+        int idx = get_cache_index(counter);
+        if (!failed_prefixes[idx]) {
+            build_password_string(counter, 4, alphabet, current_password);
+            current_password[4] = '\0';
+            if (check_partial(current_password, 0)) {
+                 if (bruteForce(alphabet, base, counter, password_size, 4, found_password)) {
+                    free(failed_prefixes);
+                    return;
+                 };
+            } else {
+                failed_prefixes[idx] = true;
+            }
+        }
+    } while (increment_counter(counter, base, 4, 0));
+    found_password[0] = '\0';
+    free(failed_prefixes);
+    return;
 }
