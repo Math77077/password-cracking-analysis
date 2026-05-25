@@ -15,6 +15,7 @@ void populate_generation(Individual generation[], char alphabet[]);
 void update_generation_fitness_value(Individual generation[]);
 int select_parent_index(Individual generation[]);
 void breeding_individuals(Individual current_generation[], Individual next_generation[], char alphabet[]);
+void crack_password_genetic_algorithm(char alphabet[], char *found_password);
 
 void populate_generation(Individual generation[], char alphabet[]) {
     for (int i = 0; i < POPULATION_SIZE; i++) {

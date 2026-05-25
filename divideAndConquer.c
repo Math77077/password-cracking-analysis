@@ -6,7 +6,7 @@
 bool increment_counter(int counter[], int base, int size, int left_boundary);
 void build_password_string(int counter[], char alphabet[], char curr_password[], int start_idx, int end_idx);
 bool crack_sequential_halves(int counter[], int base, int size, char final_password[], char alphabet[]);
-
+void solve_divide_and_conquer(char alphabet[], int base, int password_size, char *found_password);
 
 bool increment_counter(int counter[], int base, int size, int left_boundary) {
     int idx = size - 1;
@@ -39,7 +39,6 @@ bool crack_sequential_halves(int counter[], int base, int size, char current_pas
             first_match_found = true;
         } else {
             if (!increment_counter(counter, base, 4, 0)) {
-                printf("Search complete for first half. All alphanumeric combinations exhausted. Target password not found.");
                 return false;
             }
         }
@@ -53,7 +52,6 @@ bool crack_sequential_halves(int counter[], int base, int size, char current_pas
             second_match_found = true;
         } else {
             if (!increment_counter(counter, base, 8, 4)) {
-                printf("Search complete for second half. All alphanumeric combinations exhausted. Target password not found.");
                 return false;
             };
         }
@@ -63,13 +61,14 @@ bool crack_sequential_halves(int counter[], int base, int size, char current_pas
     return true;
 }
 
-void solve_divide_and_conquer(char alphabet[], int base, int password_size) {
+void solve_divide_and_conquer(char alphabet[], int base, int password_size, char *found_password) {
     int counter[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-    bool match_found = false;
 
     char current_password[9];
 
     if (crack_sequential_halves(counter, base, password_size, current_password, alphabet)) {
-        printf("Password cracked! The password is: %s\n", current_password);
+        strcpy(found_password, current_password);
+    } else {
+        found_password[0] = '\0';
     }
 }

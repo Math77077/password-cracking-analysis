@@ -7,8 +7,9 @@
 
 bool increment_counter(int counter[], int base, int size, int left_boundary);
 void build_password_string(int counter[], int password_size, char alphabet[], char curr_password[]);
-bool bruteForce(char alphabet[], int base, int counter[], int password_size, int start_idx);
-void solve_dynamic_programming_memoization(char alphabet[], int base, int password_size);
+bool bruteForce(char alphabet[], int base, int counter[], int password_size, int start_idx, char* found_password);
+static int get_cache_index(const int counter[]);
+void solve_dynamic_programming_memoization(char alphabet[], int base, int password_size, char *found_password);
 
 bool increment_counter(int counter[], int base, int size, int left_boundary) {
     int idx = size - 1;
@@ -32,14 +33,14 @@ void build_password_string(int counter[], int password_size, char alphabet[], ch
     curr_password[password_size] = '\0';
 }
 
-bool bruteForce(char alphabet[], int base, int counter[], int password_size, int start_idx) {
+bool bruteForce(char alphabet[], int base, int counter[], int password_size, int start_idx, char* found_password) {
     bool has_next = true;
     char current_password[9];
 
     while (has_next == true) {
         build_password_string(counter, password_size, alphabet, current_password);
         if (check_full(current_password)) {
-            printf("Password cracked! The password is: %s\n", current_password);
+            strcpy(found_password, current_password);
             return true;
         } else {
             has_next = increment_counter(counter, base, password_size, start_idx);
@@ -53,7 +54,7 @@ static int get_cache_index(const int counter[]) {
     return index;
 }
 
-void solve_dynamic_programming_memoization(char alphabet[], int base, int password_size) {
+void solve_dynamic_programming_memoization(char alphabet[], int base, int password_size, char *found_password) {
     int counter[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     char current_password[9];
 
@@ -69,7 +70,7 @@ void solve_dynamic_programming_memoization(char alphabet[], int base, int passwo
             build_password_string(counter, 4, alphabet, current_password);
             current_password[4] = '\0';
             if (check_partial(current_password, 0)) {
-                 if (bruteForce(alphabet, base, counter, password_size, 4)) {
+                 if (bruteForce(alphabet, base, counter, password_size, 4, found_password)) {
                     free(failed_prefixes);
                     return;
                  };
@@ -78,7 +79,7 @@ void solve_dynamic_programming_memoization(char alphabet[], int base, int passwo
             }
         }
     } while (increment_counter(counter, base, 4, 0));
-    printf("Search complete. All alphanumeric combinations exhausted. Target password not found.");
+    found_password[0] = '\0';
     free(failed_prefixes);
     return;
 }

@@ -5,7 +5,7 @@
 
 bool increment_counter(int counter[], int base, int size);
 void build_password_string(int counter[], int password_size, char alphabet[], char curr_password[]);
-void solve_brute_force(char alphabet[], int base, int password_size);
+void solve_brute_force(char alphabet[], int base, int password_size, char *found_password);
 
 bool increment_counter(int counter[], int base, int size) {
     int idx = size - 1;
@@ -29,7 +29,7 @@ void build_password_string(int counter[], int password_size, char alphabet[], ch
     curr_password[password_size] = '\0';
 }
 
-void solve_brute_force(char alphabet[], int base, int password_size) {
+void solve_brute_force(char alphabet[], int base, int password_size, char *found_password) {
     int counter[8] = {0, 0, 0, 0, 0, 0, 0, 0};
     bool has_next = true;
     char current_password[9];
@@ -37,12 +37,12 @@ void solve_brute_force(char alphabet[], int base, int password_size) {
     while (has_next == true) {
         build_password_string(counter, password_size, alphabet, current_password);
         if (check_full(current_password)) {
-            printf("Password cracked! The password is: %s\n", current_password);
+            strcpy(found_password, current_password);
             return;
         } else {
             has_next = increment_counter(counter, base, password_size);
         }
     }
-    printf("Search complete. All alphanumeric combinations exhausted. Target password not found.");
+    found_password[0] = '\0';
     return ;
 }
