@@ -3,8 +3,8 @@
 #include <string.h>
 #include "oracle.h"
 
-bool increment_counter(int counter[], int base, int size, int left_boundary);
-void build_password_string(int counter[], char alphabet[], char curr_password[], int start_idx, int end_idx);
+static bool increment_counter(int counter[], int base, int size, int left_boundary);
+static void build_password_string(int counter[], char alphabet[], char curr_password[], int start_idx, int end_idx);
 bool crack_sequential_halves(int counter[], int base, int size, char final_password[], char alphabet[]);
 void solve_divide_and_conquer(char alphabet[], int base, int password_size, char *found_password);
 
