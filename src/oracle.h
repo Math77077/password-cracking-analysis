@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define MODE_RAMDOM 0
+#define MODE_RANDOM 0
 #define MODE_FILE 1
 
 void oracle_init(int mode, const char* path);

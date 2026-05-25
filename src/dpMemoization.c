@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
 #include "oracle.h"
 
 #define CACHE_SIZE 14776336
 
-bool increment_counter(int counter[], int base, int size, int left_boundary);
-void build_password_string(int counter[], int password_size, char alphabet[], char curr_password[]);
+static bool increment_counter(int counter[], int base, int size, int left_boundary);
+static void build_password_string(int counter[], int password_size, char alphabet[], char curr_password[]);
 bool bruteForce(char alphabet[], int base, int counter[], int password_size, int start_idx, char* found_password);
 static int get_cache_index(const int counter[]);
 void solve_dynamic_programming_memoization(char alphabet[], int base, int password_size, char *found_password);

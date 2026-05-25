@@ -3,8 +3,8 @@
 #include <string.h>
 #include "oracle.h"
 
-bool increment_counter(int counter[], int base, int size);
-void build_password_string(int counter[], int password_size, char alphabet[], char curr_password[]);
+static bool increment_counter(int counter[], int base, int size);
+static void build_password_string(int counter[], int password_size, char alphabet[], char curr_password[]);
 void solve_brute_force(char alphabet[], int base, int password_size, char *found_password);
 
 bool increment_counter(int counter[], int base, int size) {
