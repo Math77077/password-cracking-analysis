@@ -1,0 +1,5 @@
+Algorithm,Mode,AvgTime_ms,AvgOracleHits
+brute,file,4743.609,375464276.00
+dnc,file,47.025,6055902.00
+dp,file,66.494,6055902.00
+genetic,file,0.572,5046.15
