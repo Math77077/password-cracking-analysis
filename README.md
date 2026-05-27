@@ -36,6 +36,7 @@ password_cracker/
 ├── Makefile                    # Compiles native optimized executable 'cracker'
 ├── main.c                      # CLI parsing and performance timing harness
 ├── analysis.py                 # Automated multi-file visualization pipeline
+├── password-cracker-report.pdf # Final compiled SBC experimental technical report
 └── requirements.txt            # Isolated environment dependency map
 
 ```
@@ -64,9 +65,12 @@ password_cracker/
 
 ## SBC Technical Report Status
 
-* **Status:** `In Development` 🛠️
+* **Status:** `Completed` 
 * **Format:** SBC Conference Template (Sociedade Brasileira de Computação).
-* **Target Delivery:** Focuses on empirical trade-offs, side-channel fitness mapping (timing/power analysis equivalents), and firewall viability constraints under restrictive IP-lockout conditions.
+* **Language:** Portuguese (with English Abstract).
+* **Delivery Artifact:** [Download PDF Report](./password-cracker-report.pdf) 
+* **Core Focus:** Evaluates empirical trade-offs, CPU runtimes, and oracle hits across 13 controlled executions. Discusses side-channel fitness mapping (timing/power analysis equivalents), dynamic programming memoization overheads, and firewall viability constraints under restrictive 5-attempt IP-lockout conditions.
+* **Academic Integrity:** Transparently documented AI-assisted linguistic and styling revisions in accordance with CNPq Portaria nº 2.664/2026 guidelines.
 
 ---
 
